@@ -55,6 +55,8 @@ Dans le jeu, ouvrir **Playlists en ligne** et coller le code dans le champ de pa
 
 Le thème est défini dans `akira-chrome/akira-v2.css`, chargé après les styles existants : bleu-noir `#09121B` / `#101C28`, corail `#FF405B`, blanc cassé `#ECE9E2` et typographie Montserrat.
 
+Les barres de progression conservent les couleurs des rangs et présentent un reflet métallique discret avec des ombres pour donner de la profondeur. Les séparations verticales entre les colonnes du benchmark sont masquées ; les séparations horizontales et les contours des barres restent visibles.
+
 ## Scénarios suivis
 
 - Pasu Track Smooth
