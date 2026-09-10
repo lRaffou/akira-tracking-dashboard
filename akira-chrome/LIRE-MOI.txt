@@ -1,0 +1,22 @@
+VERSION CHROME — aucun serveur, aucune installation.
+
+1. Décompresse le dossier et ouvre index.html dans Google Chrome sur ordinateur.
+2. Clique « Choisir mon dossier Stats », sélectionne :
+   D:\SteamLibrary\steamapps\common\FPSAimTrainer\FPSAimTrainer\stats
+3. Autorise la lecture dans la fenêtre Chrome. Attends environ 5 à 10 secondes.
+
+Laisse l'onglet ouvert pendant les runs. Les contrôles ont lieu environ toutes les 5 secondes, mais Chrome peut les ralentir ou suspendre un onglet en arrière-plan. Les fichiers manqués sont repris au prochain contrôle. À la réouverture, clique « Reprendre le suivi » si Chrome demande une nouvelle autorisation.
+
+Les résultats et le dossier autorisé sont mémorisés dans IndexedDB, dans ce profil Chrome. Aucun résultat n'est envoyé sur Internet. Ne supprime pas les données de navigation sans sauvegarde. Garde le dossier du dashboard au même emplacement et utilise le même profil Chrome.
+
+« Sauvegarder l'historique » télécharge un JSON ; « Restaurer une sauvegarde » le réimporte. Une réimportation fusionne les runs identiques. Les CSV du jeu ne sont jamais modifiés.
+
+Le tableau conserve tes anciens records de référence ; les graphiques utilisent uniquement les runs importés et datés. Les seuils sont modifiables dans data.js. Les fichiers .perf ne sont pas lus : les Stats.csv suffisent ici.
+
+Les dates sont les heures locales inscrites dans les noms de fichiers. Les runs sont identifiés par scénario + date à la seconde. Accuracy = hits / (hits + misses), ou inconnue si les métriques manquent.
+
+Fichiers : index.html, style.css, data.js, app.js (tableau), storage.js (CSV et base locale), live.js (graphiques et suivi).
+Le même dossier peut être hébergé en HTTPS comme site statique. L'historique est propre à l'origine du site : exporter puis restaurer pour passer du fichier local à une adresse web.
+
+Documentation Chrome : https://developer.chrome.com/docs/capabilities/web-apis/file-system-access
+Nouveautés : objectifs de session, comparaison des 7 derniers jours aux 7 précédents, filtres par catégorie/scénario/rang, graphiques 7 jours/30 jours/tout, seuils et accuracy, rang individuel et origine du record, affichage compact/aéré mémorisé. Le bilan compare les moyennes par scénario. Les premières tentatives ne comptent pas comme records battus.
