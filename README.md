@@ -9,10 +9,10 @@ Le dashboard fonctionne dans Google Chrome sur ordinateur, depuis un fichier loc
 
 ## Versions et publication
 
-- `main` : version publiée sur GitHub Pages.
+- `main` : version V2 publiée sur GitHub Pages, avec l’identité visuelle Akiraffou.
 - `benchmark-V2` : nouvelle identité visuelle Akiraffou, avec fonds bleu-noir, accents corail, textes blanc cassé et panneaux anguleux. Les couleurs des rangs sont conservées.
 
-Chaque push sur `main` publie automatiquement le dossier `akira-chrome` via [le workflow GitHub Pages](.github/workflows/pages.yml). Un push sur `benchmark-V2` ne modifie pas le site public. Pour découvrir la V2, ouvrir son fichier `akira-chrome/index.html` dans Chrome.
+Chaque push sur `main` publie automatiquement le dossier `akira-chrome` via [le workflow GitHub Pages](.github/workflows/pages.yml). La V2 a été intégrée à `main` et est accessible sur le site public. Un push sur `benchmark-V2` seul ne modifie pas le site public.
 
 ## Utilisation
 
