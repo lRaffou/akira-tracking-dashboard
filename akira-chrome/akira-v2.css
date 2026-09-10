@@ -26,7 +26,10 @@ td,tbody th{border-bottom-color:#263442}
 tbody+tbody tr:first-child>*{border-top-color:#485361}
 .scenario-name{color:var(--ink);font-weight:700}.scenario-cell small{color:#a9b5bf}
 .category-cell,.category-rank,.category-rank-new{border-color:#344452}
-.progress-track{border-color:#415769!important;background:#080f16!important}
+#categories th,#categories td{border-left:0!important;border-right:0!important}
+.progress-track{border-color:#415769!important;background:linear-gradient(180deg,#050b11,#13212d)!important;box-shadow:inset 0 2px 5px #0009,0 1px 0 #ffffff12!important}
+.progress-fill{box-shadow:inset 0 1px 0 #ffffff65,inset 0 -2px 3px #0006,0 1px 3px #0005!important}
+.progress-fill:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,#ffffff45 0%,#ffffff15 35%,#00000018 49%,#00000030 51%,#ffffff12 80%,#00000020 100%)}
 .progress-marker b{color:var(--ink)!important}
 .score:hover,.score:focus{border-color:#ff405b80;background:#101c28}
 .legend{color:var(--muted)}.legend-swatch{background:var(--accent)}
