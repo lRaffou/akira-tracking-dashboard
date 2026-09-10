@@ -57,6 +57,14 @@ function render(){
     });table.append(body);
   });root.append(table);
 }
+const playlistText=data.categories.flatMap(c=>c.scenarios.map(s=>s.name)).join('\n');
+const playlistArea=document.getElementById('playlist-text');
+document.getElementById('copy-playlist')?.addEventListener('click',async()=>{
+ const feedback=document.getElementById('playlist-status');
+ try{await navigator.clipboard.writeText(playlistArea.value);feedback.textContent='Code copié ! Colle-le dans les playlists en ligne de KovaaK’s.';}
+ catch{playlistArea.focus();playlistArea.select();let copied=false;try{copied=document.execCommand('copy');}catch{}feedback.textContent=copied?'Code copié ! Colle-le dans KovaaK’s.':'Appuie sur Ctrl+C pour copier le code sélectionné.';}
+});
+document.getElementById('download-playlist')?.addEventListener('click',()=>{const blob=new Blob([playlistText+'\n'],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download='akira-kovaaks-playlist.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 document.getElementById('export').addEventListener('click',()=>{
  const blob=new Blob(['// Seuils : Bronze, Silver, Gold, Platinum, Diamond.\nwindow.BENCHMARK_DATA = '+JSON.stringify(data,null,2)+';\n'],{type:'text/javascript;charset=utf-8'});
  const url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download='data.js';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('status').textContent='Export demandé : remplace data.js par le fichier téléchargé.';
