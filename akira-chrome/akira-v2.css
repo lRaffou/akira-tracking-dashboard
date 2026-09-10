@@ -1,0 +1,44 @@
+/* Identité Akiraffou — benchmark V2. */
+:root{--accent:#ff405b;--ink:#ece9e2;--line:#293744;--muted:#9daab6;color-scheme:dark}
+body{background:#080f16;color:var(--ink);background-image:linear-gradient(125deg,transparent 75%,#16233055 75%,#16233055 76%,transparent 76%);background-attachment:fixed}
+main{max-width:1640px;padding-top:38px}
+.intro{padding:12px 24px 22px;border-left:4px solid var(--accent);border-bottom:1px solid #ff405b55;background:linear-gradient(110deg,#101c28,transparent 80%)}
+.intro:after{content:"";position:absolute;right:0;top:0;width:14px;height:14px;background:var(--accent);clip-path:polygon(0 0,100% 0,100% 100%)}
+.profile-label{color:var(--accent);letter-spacing:.22em;font-weight:800}
+h1{font-size:clamp(24px,2.6vw,38px);font-weight:850;letter-spacing:-.035em;color:var(--ink)}
+h2,h3{color:var(--ink)}
+.intro p,.section-title>span{color:var(--muted)}
+.overview{background:linear-gradient(110deg,#101c28,#09121b);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:2px;padding-top:22px}
+.global h2{font-weight:800}.stats span{color:var(--ink);font-weight:750}.stats p{color:var(--muted)}
+.connection-strip{border-color:var(--line)}
+.connection-strip #connection{color:#c0c9d0}.connection-strip #connection:before{background:var(--accent)}
+.connection-settings summary{color:var(--ink)}
+button,select,#history select,.playlist-link{border-radius:2px;background:#101c28;border-color:#344452;color:var(--ink)}
+button:hover,.playlist-link:hover{background:#23222d;border-color:var(--accent)}
+#refresh-tables,.folder-actions button:first-child,.playlist-actions button:first-child{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+#refresh-tables:hover,.folder-actions button:first-child:hover,.playlist-actions button:first-child:hover{background:#df304c;border-color:#df304c}
+button:focus-visible,select:focus-visible,summary:focus-visible,input:focus-visible,.playlist-link:focus-visible,.playlist-panel textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.section-title h2,.session-panel h2,#history h2{font-weight:800;letter-spacing:-.025em}
+#categories{border-radius:2px;border-color:#344452}
+table{background:#09121b}thead th{background:#101c28;border-color:#344452}
+.scenario-row:hover{background:#162330}
+td,tbody th{border-bottom-color:#263442}
+tbody+tbody tr:first-child>*{border-top-color:#485361}
+.scenario-name{color:var(--ink);font-weight:700}.scenario-cell small{color:#a9b5bf}
+.category-cell,.category-rank,.category-rank-new{border-color:#344452}
+.progress-track{border-color:#415769!important;background:#080f16!important}
+.progress-marker b{color:var(--ink)!important}
+.score:hover,.score:focus{border-color:#ff405b80;background:#101c28}
+.legend{color:var(--muted)}.legend-swatch{background:var(--accent)}
+.folder-panel,.objective,#history,.weekly-fold,.playlist-panel{background:#0c1721;border:1px solid var(--line);border-radius:2px}
+.objective{border-top:2px solid var(--accent)}
+.objective strong{color:var(--ink);font-weight:800}
+.objective button{color:#ff8293;background:#241a26;border-color:#623040;border-radius:2px}
+.analytics-controls,.weekly-content{background:#101c28;border-radius:2px}
+#chart{background:#080f16;border-radius:2px}
+.history-scroll{border-radius:2px;border-color:var(--line)}.history-scroll th{background:#101c28}
+.playlist-panel{border-left:3px solid var(--accent)}
+.playlist-panel textarea{background:#080f16;border-color:#344452;border-radius:2px;color:var(--ink)}
+#playlist-status,.record-flag{color:#ff8293}
+footer{border-top:1px solid #ff405b55;color:#9daab6;letter-spacing:.12em}
+@media(max-width:700px){main{padding-top:20px}.intro{padding:10px 14px 18px}.overview{padding-left:14px}.profile-label{font-size:9px}}
