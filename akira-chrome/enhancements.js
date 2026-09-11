@@ -64,7 +64,8 @@ async function history(){
  draw('polyline',{points:valid.map((r,i)=>x(times[i])+','+y(r[metric.value])).join(' '),fill:'none',stroke:accuracy?'#8de0c4':'#80b6ff','stroke-width':2});
  if(!accuracy){const cumulative=new Map();let best=0;for(const r of all){best=Math.max(best,r.score);cumulative.set(r.run_key,best);}draw('polyline',{points:valid.map((r,i)=>x(times[i])+','+y(cumulative.get(r.run_key))).join(' '),fill:'none',stroke:'#e5af43','stroke-dasharray':'6 4','stroke-width':2});}
  valid.forEach((r,i)=>{const dot=draw('circle',{cx:x(times[i]),cy:y(r[metric.value]),r:3,fill:accuracy?'#8de0c4':'#80b6ff'}),title=document.createElementNS(ns,'title');title.textContent=formatRunDate(r.played_at)+' · '+formatValue(r[metric.value]);dot.append(title);});
- draw('text',{x:65,y:248,fill:'#bbb','font-size':11},formatRunDate(valid[0].played_at));draw('text',{x:885,y:248,fill:'#bbb','font-size':11,'text-anchor':'end'},formatRunDate(valid.at(-1).played_at));
+ const axisPart=valid[0].played_at.slice(0,10)===valid.at(-1).played_at.slice(0,10)?'time':'date';
+ draw('text',{x:65,y:248,fill:'#bbb','font-size':11},formatRunDate(valid[0].played_at,axisPart));draw('text',{x:885,y:248,fill:'#bbb','font-size':11,'text-anchor':'end'},formatRunDate(valid.at(-1).played_at,axisPart));
  }
  svg.setAttribute('aria-label',accuracy?'Évolution de l’accuracy en pourcentage':'Scores, record cumulé et seuils de rang');
  document.querySelector('#chart + p').textContent=accuracy?'Vert : accuracy de chaque run. Les valeurs manquantes sont exclues.':'Bleu : score · Doré : record cumulé depuis le premier run importé · Lignes colorées : seuils de rang.';

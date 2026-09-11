@@ -110,7 +110,7 @@ Les fichiers KovaaK’s sont lus en lecture seule. Le dashboard n’envoie ni le
 
 ## Données et calculs
 
-Les dates affichées suivent le format `JJ-MM-AAAA HHhmm` sur 24 heures, par exemple `11-09-2026 16h05`. Les dates enregistrées et exportées conservent leur format d’origine.
+L’affichage s’adapte au contexte : `HHhmm` pour les actualisations, `JJ-MM-AAAA HHhmm` pour l’historique et les infobulles des runs. Sur l’axe du graphique, seules les heures apparaissent si les runs sont du même jour, sinon seules les dates. Les dates enregistrées et exportées conservent leur format d’origine.
 
 Les champs récupérés quand ils sont disponibles sont : scénario, score, date du run, accuracy, hits, misses et dégâts.
 
