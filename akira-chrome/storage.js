@@ -1,3 +1,10 @@
+/* Dates displayed locally; stored timestamps retain their original format. */
+window.formatRunDate=function(value){
+ const date=value instanceof Date?value:new Date(value);
+ if(!Number.isFinite(date.getTime()))return '—';
+ const pad=n=>String(n).padStart(2,'0');
+ return pad(date.getDate())+'-'+pad(date.getMonth()+1)+'-'+date.getFullYear()+' '+pad(date.getHours())+'h'+pad(date.getMinutes());
+};
 /* Everything stays in Chrome. No network request, no write access to game files. */
 window.LocalTracker = (() => {
   let db, directory = null, busy = false, enabled = false;
@@ -58,7 +65,7 @@ window.LocalTracker = (() => {
         }catch(e){errors.push(name+' : '+e.message);}
       }
       state.state=matching?'Suivi actif · dossier '+directory.name:'Aucun CSV du benchmark trouvé. Vérifie que tu as sélectionné le dossier stats.';
-      state.last_scan=new Date().toLocaleTimeString('fr-FR');state.errors=errors.slice(0,5);
+      state.last_scan=formatRunDate(new Date());state.errors=errors.slice(0,5);
     }catch(e){state.state='Lecture interrompue : '+e.message;state.errors=[e.message];}
     finally{busy=false;}
   }
