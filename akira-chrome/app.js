@@ -21,7 +21,7 @@ function validate(){
     for(const s of c.scenarios)if(!Number.isFinite(s.score)||s.score<0||!Array.isArray(s.thresholds)||s.thresholds.length!==5||s.thresholds.some((v,i)=>!Number.isFinite(v)||v<=0||(i>0&&v<=s.thresholds[i-1])))throw Error("Score ou seuils invalides : "+s.name);
   }
 }
-function render(){
+function render(targetScenario){
   document.getElementById("title").textContent=data.title;document.title=data.title;
   document.getElementById("player").textContent=data.player;
   const all=data.categories.flatMap(c=>c.scenarios), p=average(all), rank=Math.floor(p);
@@ -35,7 +35,7 @@ function render(){
   document.getElementById("global-bar").setAttribute("aria-label","Progression vers le prochain rang global");
   document.getElementById("achieved").textContent=all.filter(s=>s.score>=s.thresholds[0]).length+" / 12";
   document.getElementById("best").textContent=data.categories.reduce((a,b)=>average(a.scenarios)>=average(b.scenarios)?a:b).name;
-  const root=document.getElementById("categories");root.replaceChildren();
+  const root=document.getElementById("categories");
 
   const table=el('table');table.setAttribute('aria-label','Tracking Benchmark by Akira');
   const thead=el('thead'),hr=el('tr');
@@ -44,6 +44,7 @@ function render(){
     const body=el('tbody');
     c.scenarios.forEach((s,si)=>{
       const row=el('tr',undefined,'scenario-row'),sp=points(s.score,s.thresholds),sr=Math.floor(sp);
+      row.dataset.scenario=s.name;
       row.style.setProperty('--fill', ['#697481','#af7108','#85939f','#b69a35','#489e94','#6b82ce'][sr]);
       if(si===0){const cat=el('th',undefined,'category-cell');cat.scope='rowgroup';cat.rowSpan=3;cat.style.color=['#60ceeb','#96a6ff','#d7adff','#5ed6b0'][ci];cat.append(el('span',c.name));row.append(cat);}
       const name=el('th',undefined,'scenario-cell');name.scope='row';name.append(el('span',s.name,'scenario-name'),el('small',sr===5?'Diamond atteint':'Encore '+fmt(s.thresholds[sr]-s.score)+' points pour '+ranks[sr+1]));row.append(name);
@@ -55,7 +56,13 @@ function render(){
       if(si===0){const categoryRank=el('td',undefined,'category-rank-new');categoryRank.rowSpan=3;categoryRank.append(badge(average(c.scenarios)));row.append(categoryRank);}
       body.append(row);
     });table.append(body);
-  });root.append(table);
+  });
+  if(targetScenario){
+    const oldRow=[...root.querySelectorAll('.scenario-row')].find(r=>r.dataset.scenario===targetScenario);
+    const newRow=[...table.querySelectorAll('.scenario-row')].find(r=>r.dataset.scenario===targetScenario);
+    if(oldRow&&newRow){const oldBadge=oldRow.parentElement.querySelector('.category-rank-new');const newBadge=newRow.parentElement.querySelector('.category-rank-new');if(oldBadge&&newBadge)oldBadge.replaceChildren(...newBadge.cloneNode(true).childNodes);oldRow.replaceWith(newRow);}
+  }else root.replaceChildren(table);
+  window.installScenarioActions?.();
 }
 const playlistText=data.categories.flatMap(c=>c.scenarios.map(s=>s.name)).join('\n');
 const playlistArea=document.getElementById('playlist-text');

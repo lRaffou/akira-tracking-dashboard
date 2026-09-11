@@ -31,7 +31,7 @@ async function updateInsights(){
  const map=scenarioMap(),grid=session.querySelector('.objective-grid');grid.replaceChildren();
  const objectives=[...map.values()].map(s=>{const p=points(s.score,s.thresholds),r=Math.floor(p);return {...s,p,r,remaining:r===5?Infinity:1-(p-r)};}).filter(s=>s.r<5).sort((a,b)=>a.remaining-b.remaining).slice(0,3);
  if(!objectives.length)grid.append(ui('p','Diamond atteint sur les 12 scénarios !'));
- objectives.forEach(s=>{const card=ui('article',undefined,'objective');card.append(ui('h3',s.name),ui('p',rankNames[s.r]+' → '+rankNames[s.r+1]),ui('strong','Objectif : '+formatValue(s.thresholds[s.r])),ui('p','Encore '+formatValue(s.thresholds[s.r]-s.score)+' points · '+Math.round(s.remaining*100)+' % du palier'));const b=ui('button','Voir mon évolution');b.onclick=()=>{categoryFilter.value='';fillScenarios(s.name);history();document.getElementById('history').scrollIntoView({behavior:'smooth'});};card.append(b);grid.append(card);});
+ objectives.forEach(s=>{const card=ui('article',undefined,'objective');card.append(ui('h3',s.name),ui('p',rankNames[s.r]+' → '+rankNames[s.r+1]),ui('strong','Objectif : '+formatValue(s.thresholds[s.r])),ui('p','Encore '+formatValue(s.thresholds[s.r]-s.score)+' points · '+Math.round(s.remaining*100)+' % du palier'));const b=ui('button','Voir mon évolution');b.onclick=()=>openScenarioStats(s.name);card.append(b);grid.append(card);});
  const w=weeklySummary(analyticsRuns),box=weekly.querySelector('.weekly-content');box.replaceChildren();
  box.append(ui('p',`${w.recent.length} runs ces 7 derniers jours · ${w.older.length} la période précédente. Records battus : ${w.records.recent} contre ${w.records.older}.`));
  box.append(ui('p','Records calculés parmi les runs importés ; le premier run d’un scénario ne compte pas comme un record battu.','muted'));
@@ -39,7 +39,7 @@ async function updateInsights(){
  for(const [name] of map){const a=w.recent.filter(r=>r.scenario===name),b=w.older.filter(r=>r.scenario===name);if(!a.length&&!b.length)continue;const avg=x=>x.length?x.reduce((n,r)=>n+r.score,0)/x.length:null;const av=avg(a),bv=avg(b),delta=av!==null&&bv!==null&&bv>0?(av-bv)/bv*100:null;const row=ui('tr');[name,formatValue(av)+(a.length?' ('+a.length+' runs)':''),formatValue(bv)+(b.length?' ('+b.length+' runs)':''),delta===null?'Comparaison indisponible':(delta>=0?'+':'')+formatValue(delta)+' %'].forEach(t=>row.append(ui('td',t)));body.append(row);}
  table.append(body);if(body.children.length){const wrap=ui('div',undefined,'history-scroll');wrap.append(table);box.append(wrap);}else box.append(ui('p','Aucun run sur ces deux périodes. Ton bilan apparaîtra après tes prochaines sessions.'));
  document.querySelectorAll('.scenario-row').forEach((row,i)=>{const s=[...map.values()][i],name=row.querySelector('.scenario-cell');const meta=ui('div',undefined,'score-origin');meta.append(badge(points(s.score,s.thresholds)));name.append(meta);});
- const latest=[...analyticsRuns].sort((a,b)=>b.played_at.localeCompare(a.played_at))[0];const info=document.getElementById('last-result')||ui('p');info.id='last-result';info.textContent=latest?'Dernier run disponible : '+latest.scenario+' · '+formatValue(latest.score)+' · '+latest.played_at.replace('T',' '):'Aucun run importé pour le moment.';document.querySelector('.folder-panel').append(info);
+ const latest=[...analyticsRuns].sort((a,b)=>b.played_at.localeCompare(a.played_at))[0];const info=document.getElementById('last-result')||ui('p');info.id='last-result';info.textContent=latest?'Dernier run disponible : '+latest.scenario+' · '+formatValue(latest.score)+' · '+formatRunDate(latest.played_at):'Aucun run importé pour le moment.';document.querySelector('.folder-panel').append(info);
  document.querySelector('.folder-panel').dataset.attention=/réautoriser|autoriser|refus|interromp|Choisis|mémorisé/.test(LocalTracker.state.state)?'true':'false';
 }
 function fillScenarios(selected){const old=selected||choose.value;choose.replaceChildren();for(const c of window.BENCHMARK_DATA.categories)if(!categoryFilter.value||categoryFilter.value===c.name)for(const s of c.scenarios){const o=ui('option',s.name);o.value=s.name;choose.append(o);}if([...choose.options].some(o=>o.value===old))choose.value=old;}
@@ -47,8 +47,10 @@ categoryFilter.onchange=()=>{fillScenarios();historyLimit=100;history();};[rankF
 async function history(){
  const ticket=++activeHistory,all=await LocalTracker.history(choose.value);if(ticket!==activeHistory)return;
  const s=scenarioMap().get(choose.value);if(!s)return;
+ document.querySelector('#history h2').textContent='Évolution · '+s.name;
  const cutoff=period.value==='all'?-Infinity:Date.now()-Number(period.value)*86400000;
  const rows=all.filter(r=>new Date(r.played_at).getTime()>=cutoff&&(rankFilter.value===''||runRank(r,s)===Number(rankFilter.value)));
+ window.renderStatsSummary?.(s,rows);
  document.getElementById('history-count').textContent=rows.length+' runs filtrés · '+all.length+' au total pour ce scénario';
  const svg=document.getElementById('chart');svg.replaceChildren();const ns='http://www.w3.org/2000/svg';
  function draw(tag,attrs,text){const n=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;svg.append(n);return n;}
@@ -61,10 +63,10 @@ async function history(){
  if(!accuracy)s.thresholds.forEach((t,i)=>{draw('line',{x1:65,x2:885,y1:y(t),y2:y(t),stroke:colors[i+1],'stroke-dasharray':'3 6',opacity:.5});draw('text',{x:892,y:y(t)+4,fill:colors[i+1],'font-size':11},rankNames[i+1]);});
  draw('polyline',{points:valid.map((r,i)=>x(times[i])+','+y(r[metric.value])).join(' '),fill:'none',stroke:accuracy?'#8de0c4':'#80b6ff','stroke-width':2});
  if(!accuracy){const cumulative=new Map();let best=0;for(const r of all){best=Math.max(best,r.score);cumulative.set(r.run_key,best);}draw('polyline',{points:valid.map((r,i)=>x(times[i])+','+y(cumulative.get(r.run_key))).join(' '),fill:'none',stroke:'#e5af43','stroke-dasharray':'6 4','stroke-width':2});}
- valid.forEach((r,i)=>{const dot=draw('circle',{cx:x(times[i]),cy:y(r[metric.value]),r:3,fill:accuracy?'#8de0c4':'#80b6ff'}),title=document.createElementNS(ns,'title');title.textContent=r.played_at+' · '+formatValue(r[metric.value]);dot.append(title);});
- draw('text',{x:65,y:248,fill:'#bbb','font-size':11},valid[0].played_at.replace('T',' '));draw('text',{x:885,y:248,fill:'#bbb','font-size':11,'text-anchor':'end'},valid.at(-1).played_at.replace('T',' '));
+ valid.forEach((r,i)=>{const dot=draw('circle',{cx:x(times[i]),cy:y(r[metric.value]),r:3,fill:accuracy?'#8de0c4':'#80b6ff'}),title=document.createElementNS(ns,'title');title.textContent=formatRunDate(r.played_at)+' · '+formatValue(r[metric.value]);dot.append(title);});
+ draw('text',{x:65,y:248,fill:'#bbb','font-size':11},formatRunDate(valid[0].played_at));draw('text',{x:885,y:248,fill:'#bbb','font-size':11,'text-anchor':'end'},formatRunDate(valid.at(-1).played_at));
  }
  svg.setAttribute('aria-label',accuracy?'Évolution de l’accuracy en pourcentage':'Scores, record cumulé et seuils de rang');
  document.querySelector('#chart + p').textContent=accuracy?'Vert : accuracy de chaque run. Les valeurs manquantes sont exclues.':'Bleu : score · Doré : record cumulé depuis le premier run importé · Lignes colorées : seuils de rang.';
- const body=document.getElementById('history-rows');body.replaceChildren();rows.slice(-historyLimit).reverse().forEach(r=>{const tr=ui('tr');[r.played_at.replace('T',' '),formatValue(r.score),null,r.accuracy==null?'—':formatValue(r.accuracy)+' %',formatValue(r.hits),formatValue(r.damage)].forEach((v,i)=>{const td=ui('td',v===null?undefined:v);if(i===2)td.append(badge(runRank(r,s)));tr.append(td);});body.append(tr);});more.hidden=rows.length<=historyLimit;
+ const body=document.getElementById('history-rows');body.replaceChildren();rows.slice(-historyLimit).reverse().forEach(r=>{const tr=ui('tr');[formatRunDate(r.played_at),formatValue(r.score),null,r.accuracy==null?'—':formatValue(r.accuracy)+' %',formatValue(r.hits),formatValue(r.damage)].forEach((v,i)=>{const td=ui('td',v===null?undefined:v);if(i===2)td.append(badge(runRank(r,s)));tr.append(td);});body.append(tr);});more.hidden=rows.length<=historyLimit;
 }
